@@ -3,6 +3,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 
+const bad_words = ["nig","nigger","nigga","fag","faggot",
+  "black","coon","moon","cricket","spick","gook","chink"
+]
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -78,6 +82,11 @@ io.on('connection', (socket) => {
 
   socket.on('chat', ({ message }) => {
     if (gameState.players[socket.id]?.status === 'active') {
+      
+      if (bad_words.some(badWord => message.toLowerCase().includes(badWord))) {
+        message = "*";
+      }
+
       io.to(gameCode).emit('chat', {
         player: gameState.players[socket.id].name,
         message,
