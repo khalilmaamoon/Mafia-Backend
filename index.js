@@ -72,6 +72,7 @@ io.on('connection', (socket) => {
     );
     gameState.phase = 'discussion';
     gameState.round = 1;
+    io.to(gameCode).emit('game:state', gameState);
     startDiscussion();
   });
 
@@ -116,6 +117,7 @@ function startDiscussion() {
     console.log('Timer tick: timeLeft =', gameState.timeLeft);
     gameState.timeLeft--;
     io.to(gameCode).emit('timer', gameState.timeLeft);
+    io.to(gameCode).emit('game:state', gameState);
     console.log('Emitted timer to room', gameCode, 'timeLeft:', gameState.timeLeft);
     if (gameState.timeLeft <= 0) {
       console.log('Discussion ended, starting voting');
